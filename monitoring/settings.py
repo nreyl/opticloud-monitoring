@@ -39,7 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'measurements',
     'variables',
+    'reports',
 ]
+
+# RabbitMQ settings
+RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', 'localhost')
+RABBITMQ_USER = os.environ.get('RABBITMQ_USER', 'guest')
+RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'guest')
+
+# Report cache TTL in seconds
+REPORT_CACHE_TTL = 300
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
