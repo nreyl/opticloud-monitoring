@@ -120,7 +120,7 @@ resource "aws_security_group" "traffic_http" {
   description = "Allow HTTP traffic on port 8080"
 
   ingress {
-    description = "HTTP acceso a la aplicación Django"
+    description = "HTTP acceso a la aplicacion Django"
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
@@ -176,7 +176,7 @@ resource "aws_security_group" "traffic_rabbit" {
   description = "Allow RabbitMQ traffic on ports 5672 and 15672"
 
   ingress {
-    description = "AMQP para mensajería RabbitMQ"
+    description = "AMQP para mensajeria RabbitMQ"
     from_port   = 5672
     to_port     = 5672
     protocol    = "tcp"
@@ -408,6 +408,6 @@ output "rabbitmq_private_ip" {
 }
 
 output "web_servers_public_ips" {
-  description = "IPs públicas de los web servers"
+  description = "IPs publicas de los web servers"
   value       = { for k, v in aws_instance.web_server : k => v.public_ip }
 }
