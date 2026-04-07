@@ -1,6 +1,7 @@
 import json
 import time
 import os
+import random
 import django
 import pika
 
@@ -8,7 +9,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'monitoring.settings')
 django.setup()
 
 from django.conf import settings
-from measurements.models import Measurement
+from django.utils import timezone
 
 RABBITMQ_HOST = settings.RABBITMQ_HOST
 RABBITMQ_USER = settings.RABBITMQ_USER
@@ -20,11 +21,13 @@ INTERVAL_SECONDS = 30
 
 def generate_report_data(report_type):
     start = time.time()
-    measurements = Measurement.objects.all().order_by('-dateTime')[:100]
     data = {
         'report_type': report_type,
-        'count': measurements.count(),
-        'measurements': list(measurements.values('value', 'unit', 'place')),
+        'cpu_usage': round(random.uniform(20, 90), 2),
+        'memory_usage': round(random.uniform(30, 85), 2),
+        'disk_io': round(random.uniform(5, 60), 2),
+        'active_instances': random.randint(1, 6),
+        'generated_at': timezone.now().isoformat(),
     }
     elapsed_ms = (time.time() - start) * 1000
     return data, elapsed_ms
