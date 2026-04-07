@@ -31,7 +31,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-2"
+  region = "us-east-1"
 }
 
 ###############################################################################
@@ -39,8 +39,8 @@ provider "aws" {
 ###############################################################################
 
 variable "ami_id" {
-  description = "Ubuntu 24.04 LTS en us-east-2"
-  default     = "ami-07062e2a343acc423"
+  description = "Ubuntu 24.04 LTS en us-east-1"
+  default     = "ami-0c7217cdde317cfec"
 }
 
 variable "db_password" {
@@ -59,30 +59,10 @@ variable "db_username" {
 # VPC – Default VPC (segun diagrama: AWS-Default VPC)
 ###############################################################################
 
-data "aws_vpc" "default" {
-  default = true
-}
-
-data "aws_subnet" "az_a" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
-  }
-  filter {
-    name   = "availabilityZone"
-    values = ["us-east-2a"]
-  }
-}
-
-data "aws_subnet" "az_b" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
-  }
-  filter {
-    name   = "availabilityZone"
-    values = ["us-east-2b"]
-  }
+locals {
+  vpc_id     = "vpc-059ef43be626c44cf"
+  subnet_a   = "subnet-0de1735ee80d5f5be"  # us-east-1a
+  subnet_b   = "subnet-09f3e9b00dfaf5d14"  # us-east-1b
 }
 
 ###############################################################################
@@ -93,7 +73,7 @@ data "aws_subnet" "az_b" {
 resource "aws_security_group" "alb_sg" {
   name        = "opticloud-alb-sg"
   description = "HTTP entrante al ALB desde Internet"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.vpc_id
 
   ingress {
     description = "HTTP desde Internet (JMeter y usuarios)"
@@ -117,7 +97,7 @@ resource "aws_security_group" "alb_sg" {
 resource "aws_security_group" "web_sg" {
   name        = "opticloud-web-sg"
   description = "Trafico desde ALB hacia Web Servers Django (puerto 8000)"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.vpc_id
 
   ingress {
     description     = "HTTP desde el ALB"
@@ -144,7 +124,7 @@ resource "aws_security_group" "web_sg" {
 resource "aws_security_group" "pregenerator_sg" {
   name        = "opticloud-pregenerator-sg"
   description = "Report Pre-Generator: solo egress a RDS, sin ingress de apps"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.vpc_id
 
   # Sin reglas ingress: este worker no recibe conexiones entrantes
   egress {
@@ -162,7 +142,7 @@ resource "aws_security_group" "pregenerator_sg" {
 resource "aws_security_group" "rds_sg" {
   name        = "opticloud-rds-sg"
   description = "PostgreSQL accesible desde Web Servers y Report Pre-Generator"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.vpc_id
 
   ingress {
     description     = "PostgreSQL desde Web Servers (Django)"
@@ -199,7 +179,7 @@ resource "aws_security_group" "rds_sg" {
 
 resource "aws_db_subnet_group" "opticloud" {
   name       = "opticloud-db-subnet-group"
-  subnet_ids = [data.aws_subnet.az_a.id, data.aws_subnet.az_b.id]
+  subnet_ids = [local.subnet_a, local.subnet_b]
   tags       = { Name = "opticloud-db-subnet-group" }
 }
 
@@ -236,7 +216,7 @@ resource "aws_db_instance" "opticloud_db" {
 resource "aws_instance" "report_pregenerator" {
   ami                    = var.ami_id
   instance_type          = "t3.micro"
-  subnet_id              = data.aws_subnet.az_a.id
+  subnet_id              = local.subnet_a
   vpc_security_group_ids = [aws_security_group.pregenerator_sg.id]
 
   root_block_device {
@@ -825,7 +805,7 @@ resource "aws_lb" "opticloud_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [data.aws_subnet.az_a.id, data.aws_subnet.az_b.id]
+  subnets            = [local.subnet_a, local.subnet_b]
   tags               = { Name = "opticloud-alb" }
 }
 
@@ -833,7 +813,7 @@ resource "aws_lb_target_group" "web_tg" {
   name     = "opticloud-web-tg"
   port     = 8000
   protocol = "HTTP"
-  vpc_id   = data.aws_vpc.default.id
+  vpc_id   = local.vpc_id
 
   health_check {
     path                = "/health/"
@@ -874,7 +854,7 @@ resource "aws_autoscaling_group" "web_asg" {
   min_size            = 1
   max_size            = 6
   desired_capacity    = 3
-  vpc_zone_identifier = [data.aws_subnet.az_a.id, data.aws_subnet.az_b.id]
+  vpc_zone_identifier = [local.subnet_a, local.subnet_b]
 
   launch_template {
     id      = aws_launch_template.web_server.id
