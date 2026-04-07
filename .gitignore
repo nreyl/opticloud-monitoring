@@ -101,6 +101,7 @@ ENV/
 .mypy_cache/
 
 .DS_Store
+.claude/
 *.sqlite3
 *.pyc
 *.db
