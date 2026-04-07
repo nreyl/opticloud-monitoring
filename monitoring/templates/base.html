@@ -1,65 +1,87 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        {% block head %}
-        <title>ISIS2503</title>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    {% block head %}
+    <title>OptiCloud – BITE.co</title>
+    {% endblock %}
+    <style>
+        body { background-color: #f4f6fb; }
+        .navbar-opticloud { background-color: #001f4e; }
+        .navbar-opticloud .navbar-brand,
+        .navbar-opticloud .nav-link { color: #ffffff !important; }
+        .navbar-opticloud .nav-link:hover { color: #00c6d7 !important; }
+        .navbar-opticloud .brand-name { font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; }
+        .navbar-opticloud .badge-cloud {
+            background-color: #00c6d7; color: #001f4e;
+            font-size: 0.65rem; padding: 2px 6px; border-radius: 4px;
+            vertical-align: middle; margin-left: 6px;
+        }
+        .footer-opticloud {
+            background-color: #001f4e; color: #aab4c8;
+            padding: 20px 40px; font-size: 0.85rem;
+        }
+        .footer-opticloud a { color: #00c6d7; text-decoration: none; }
+        .card-metric {
+            border: none; border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .metric-label { font-size: 0.8rem; color: #6c757d; text-transform: uppercase; letter-spacing: 1px; }
+        .metric-value { font-size: 2rem; font-weight: 700; color: #001f4e; }
+        .badge-hit { background-color: #d4edda; color: #155724; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; }
+        .badge-miss { background-color: #f8d7da; color: #721c24; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; }
+        .badge-cached { background-color: #cce5ff; color: #004085; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-opticloud">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <span class="brand-name">OptiCloud</span>
+        <span class="badge-cloud">BITE.co</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/reports/daily_summary/">Resumen Diario</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/reports/weekly_summary/">Resumen Semanal</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/reports/resource_usage/">Uso de Recursos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/reports/cache-stats/">Estadísticas de Caché</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<main>
+    <div class="container mt-4" style="min-height: 520px;">
+        {% block content %}
         {% endblock %}
-    </head>
-    <body>
-        <br>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    </div>
+</main>
 
-            <nav class="navbar navbar-light bg-light">
-                <a class="navbar-brand" href="/">
-                <img src="/static/media/logo.png" width="45" height="45" alt="">
-                </a>
-            </nav>
+<footer class="footer-opticloud mt-5">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <strong style="color:#ffffff;">OptiCloud</strong> &mdash; Plataforma de gestión y optimización de nube<br>
+            <small>ISIS-2503 Arquitectura y Diseño de Software &bull; Universidad de los Andes</small>
+        </div>
+        <div style="text-align:right;">
+            <small>Powered by <a href="#">BITE.co</a></small>
+        </div>
+    </div>
+</footer>
 
-          <nav class="navbar navbar-light bg-light">
-              <a class="navbar-brand" href="/">
-                  Monitoring App
-              </a>
-          </nav>
-
-
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/variables/">Variables</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/measurements/">Measurements</a>
-                </li>
-            </ul>
-
-          </div>
-        </nav>
-
-
-        <main> 
-          <div class="container" style="min-height: 580px;">
-          {% block content %} 
-          {% endblock %} 
-          </div>
-        </main> 
-
-    </body>
-
-    <!-- Footer -->
-        <footer style="background-color: #D8D8D8; position: relative; bottom: 0; width: 100%; height: 100px;">
-
-            <div style="padding: 30px">
-                <div style="float: left; width: 400px;" >ISIS-2503 Arquitectura y Diseño de Software</div>
-                <div style="float: right; width: 220px;" >Universidad de los Andes</div>
-                <br>
-                <div style="float: left; width: 400px;" ><i>Iván David Alfonso Díaz</i></div>
-            </div>
-            <br>
-
-        </footer>
-    <!-- Footer -->
-
+</body>
 </html>
