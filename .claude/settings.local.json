@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(git -C \"c:/Users/nicor/Universidad/Arquisoft/opticloud-monitoring\" show origin/Load-Balancer:monitoring/settings.py)"
-    ]
-  }
-}
