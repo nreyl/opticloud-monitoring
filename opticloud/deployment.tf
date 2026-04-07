@@ -69,9 +69,33 @@ locals {
 # SECURITY GROUPS
 ###############################################################################
 
+# SG: SSH — acceso remoto a instancias EC2
+resource "aws_security_group" "traffic_ssh" {
+  name        = "traffic-ssh"
+  description = "Allow SSH access on port 22"
+  vpc_id      = local.vpc_id
+
+  ingress {
+    description = "SSH desde Internet"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = { Name = "traffic-ssh" }
+}
+
 # SG: ALB — acepta HTTP:80 desde Internet
 resource "aws_security_group" "alb_sg" {
-  name        = "opticloud-alb-sg"
+  name        = "traffic-lb"
   description = "HTTP entrante al ALB desde Internet"
   vpc_id      = local.vpc_id
 
@@ -90,12 +114,12 @@ resource "aws_security_group" "alb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "opticloud-alb-sg" }
+  tags = { Name = "traffic-lb" }
 }
 
 # SG: Web Servers — solo acepta trafico desde el ALB en puerto 8000
 resource "aws_security_group" "web_sg" {
-  name        = "opticloud-web-sg"
+  name        = "traffic-http"
   description = "Trafico desde ALB hacia Web Servers Django (puerto 8000)"
   vpc_id      = local.vpc_id
 
@@ -114,7 +138,7 @@ resource "aws_security_group" "web_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "opticloud-web-sg" }
+  tags = { Name = "traffic-http" }
 }
 
 # SG: Report Pre-Generator — NO recibe trafico de ningún app server.
@@ -122,7 +146,7 @@ resource "aws_security_group" "web_sg" {
 # Correccion v2: eliminado el ingress en 8080 que no correspondia con el rol
 # real del componente (es un worker, no un servidor HTTP).
 resource "aws_security_group" "pregenerator_sg" {
-  name        = "opticloud-pregenerator-sg"
+  name        = "traffic-pregenerator"
   description = "Report Pre-Generator: solo egress a RDS, sin ingress de apps"
   vpc_id      = local.vpc_id
 
@@ -135,12 +159,12 @@ resource "aws_security_group" "pregenerator_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "opticloud-pregenerator-sg" }
+  tags = { Name = "traffic-pregenerator" }
 }
 
 # SG: RDS — acepta PostgreSQL (5432) desde Web Servers y Pre-Generator
 resource "aws_security_group" "rds_sg" {
-  name        = "opticloud-rds-sg"
+  name        = "traffic-db"
   description = "PostgreSQL accesible desde Web Servers y Report Pre-Generator"
   vpc_id      = local.vpc_id
 
@@ -167,7 +191,7 @@ resource "aws_security_group" "rds_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "opticloud-rds-sg" }
+  tags = { Name = "traffic-db" }
 }
 
 ###############################################################################
@@ -217,7 +241,7 @@ resource "aws_instance" "report_pregenerator" {
   ami                    = var.ami_id
   instance_type          = "t3.micro"
   subnet_id              = local.subnet_a
-  vpc_security_group_ids = [aws_security_group.pregenerator_sg.id]
+  vpc_security_group_ids = [aws_security_group.pregenerator_sg.id, aws_security_group.traffic_ssh.id]
 
   root_block_device {
     volume_size = 8
@@ -491,7 +515,7 @@ resource "aws_launch_template" "web_server" {
 
   network_interfaces {
     associate_public_ip_address = true
-    security_groups             = [aws_security_group.web_sg.id]
+    security_groups             = [aws_security_group.web_sg.id, aws_security_group.traffic_ssh.id]
   }
 
   block_device_mappings {
@@ -788,7 +812,7 @@ USERDATA
 
   tag_specifications {
     resource_type = "instance"
-    tags          = { Name = "opticloud-web-server" }
+    tags          = { Name = "opticloud-monitoring-app" }
   }
 
   depends_on = [aws_db_instance.opticloud_db]
@@ -867,7 +891,7 @@ resource "aws_autoscaling_group" "web_asg" {
 
   tag {
     key                 = "Name"
-    value               = "opticloud-web-server"
+    value               = "opticloud-monitoring-app"
     propagate_at_launch = true
   }
 }
