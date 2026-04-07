@@ -1,8 +1,68 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <div style=" display: flex; align-items: center; justify-content: center;" class="login-box auth0-box before">
-            <img style="width:80%; " src="/static/media/monitor.png" />
+<div class="row mt-4">
+    <div class="col-12 mb-4">
+        <div class="card card-metric p-4" style="background: linear-gradient(135deg, #001f4e, #003580);">
+            <div class="text-white">
+                <h2 class="font-weight-bold">OptiCloud <span style="color:#00c6d7;">Monitor</span></h2>
+                <p class="mb-3" style="color:#aab4c8;">
+                    Plataforma centralizada de gestión y optimización del uso de nube para <strong style="color:#fff;">BITE.co</strong>.
+                    Visualiza, analiza y controla costos y consumos de recursos cloud en tiempo casi real.
+                </p>
+                <a href="/reports/daily_summary/" class="btn btn-sm mr-2" style="background:#00c6d7; color:#001f4e; font-weight:600;">Ver Reporte Diario</a>
+                <a href="/reports/cache-stats/" class="btn btn-sm btn-outline-light">Estadísticas de Caché</a>
+            </div>
+        </div>
     </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card card-metric p-4 h-100">
+            <div class="metric-label">Reporte</div>
+            <div class="metric-value" style="font-size:1.4rem;">Resumen Diario</div>
+            <p class="text-muted mt-2" style="font-size:0.85rem;">Costos y consumo de recursos cloud del día actual por empresa y proyecto.</p>
+            <a href="/reports/daily_summary/" class="btn btn-sm btn-primary mt-auto">Consultar</a>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card card-metric p-4 h-100">
+            <div class="metric-label">Reporte</div>
+            <div class="metric-value" style="font-size:1.4rem;">Resumen Semanal</div>
+            <p class="text-muted mt-2" style="font-size:0.85rem;">Análisis semanal de gasto, recursos infrautilizados y patrones de desperdicio.</p>
+            <a href="/reports/weekly_summary/" class="btn btn-sm btn-primary mt-auto">Consultar</a>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card card-metric p-4 h-100">
+            <div class="metric-label">Reporte</div>
+            <div class="metric-value" style="font-size:1.4rem;">Uso de Recursos</div>
+            <p class="text-muted mt-2" style="font-size:0.85rem;">CPU, memoria y disco por instancia. Identifica recursos sobredimensionados.</p>
+            <a href="/reports/resource_usage/" class="btn btn-sm btn-primary mt-auto">Consultar</a>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-md-6 mb-3">
+        <div class="card card-metric p-4">
+            <div class="metric-label">ASR-1 · Escalabilidad</div>
+            <p class="mt-2 mb-0" style="font-size:0.9rem;">
+                Soporta picos de hasta <strong>12.000 usuarios concurrentes</strong> en ventanas de 10 minutos
+                mediante escalamiento horizontal con AWS ELB y 3 web servers.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card card-metric p-4">
+            <div class="metric-label">ASR-2 · Latencia</div>
+            <p class="mt-2 mb-0" style="font-size:0.9rem;">
+                Reportes generados en <strong>≤ 100ms</strong> con 5.000 usuarios sostenidos
+                usando pre-generación de reportes y caché en base de datos.
+            </p>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
