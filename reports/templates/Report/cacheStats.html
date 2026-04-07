@@ -1,58 +1,66 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="content">
-    <div class="">
-        <div class="page-header-title">
-            <h4 class="page-title">Cache Statistics</h4>
+<div class="row mt-2">
+    <div class="col-12 mb-3">
+        <h4 class="font-weight-bold" style="color:#001f4e;">Estadísticas de Caché</h4>
+        <small class="text-muted">Rendimiento del sistema de pre-generación de reportes &bull; ASR-2</small>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="card card-metric p-3 text-center">
+            <div class="metric-label">Total Reportes</div>
+            <div class="metric-value">{{ stats.total }}</div>
         </div>
     </div>
+    <div class="col-md-3 mb-3">
+        <div class="card card-metric p-3 text-center">
+            <div class="metric-label">Cache Hits</div>
+            <div class="metric-value" style="color:#155724;">{{ stats.hits }}</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card card-metric p-3 text-center">
+            <div class="metric-label">Cache Misses</div>
+            <div class="metric-value" style="color:#721c24;">{{ stats.misses }}</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card card-metric p-3 text-center">
+            <div class="metric-label">Hit Rate</div>
+            <div class="metric-value" style="color:#004085;">{{ stats.hit_rate_percent }}<small style="font-size:1rem;">%</small></div>
+        </div>
+    </div>
+</div>
 
-    <br>
-
-    <div class="page-content-wrapper">
-        <div class="container">
-
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr style="color:#0E2EB0">
-                            <th>Metric</th>
-                            <th>Value</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>Total Reports</td>
-                            <td>{{ stats.total }}</td>
-                        </tr>
-                        <tr>
-                            <td>Cache Hits</td>
-                            <td>{{ stats.hits }}</td>
-                        </tr>
-                        <tr>
-                            <td>Cache Misses</td>
-                            <td>{{ stats.misses }}</td>
-                        </tr>
-                        <tr>
-                            <td>Hit Rate (%)</td>
-                            <td>{{ stats.hit_rate_percent }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <div style="text-align:center;">
-                        <button type="button" class="btn btn-primary waves-effect waves-light"
-                                onClick=" window.location.href='/' ">
-                            Back
-                        </button>
-                    </div>
-
+<div class="row">
+    <div class="col-12">
+        <div class="card card-metric p-4">
+            <h6 class="font-weight-bold mb-3" style="color:#001f4e;">Análisis de rendimiento</h6>
+            <div class="progress mb-2" style="height:20px; border-radius:10px;">
+                <div class="progress-bar" role="progressbar"
+                     style="width: {{ stats.hit_rate_percent }}%; background-color:#00c6d7;"
+                     aria-valuenow="{{ stats.hit_rate_percent }}" aria-valuemin="0" aria-valuemax="100">
+                    {{ stats.hit_rate_percent }}% hits
                 </div>
             </div>
+            <small class="text-muted">
+                {% if stats.hit_rate_percent >= 80 %}
+                    El sistema de caché está funcionando correctamente. La mayoría de los reportes se sirven desde caché pre-generada.
+                {% elif stats.hit_rate_percent >= 50 %}
+                    Rendimiento moderado. Considera aumentar la frecuencia del pre-generador.
+                {% else %}
+                    El caché necesita tiempo para calentarse o el pre-generador no está corriendo.
+                {% endif %}
+            </small>
         </div>
     </div>
+</div>
+
+<div class="mt-3">
+    <a href="/" class="btn btn-outline-secondary btn-sm">Inicio</a>
 </div>
 
 {% endblock %}

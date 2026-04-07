@@ -1,58 +1,78 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="content">
-    <div class="">
-        <div class="page-header-title">
-            <h4 class="page-title">Report: {{ report.report_type }}</h4>
+<div class="row mt-2">
+    <div class="col-12 mb-3">
+        <h4 class="font-weight-bold" style="color:#001f4e;">
+            Reporte: <span style="text-transform:capitalize;">{{ report.report_type|cut:"_" }}</span>
+        </h4>
+        <small class="text-muted">Plataforma OptiCloud &bull; BITE.co</small>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="card card-metric p-3 text-center">
+            <div class="metric-label">CPU Usage</div>
+            <div class="metric-value">{{ report.data.cpu_usage }}<small style="font-size:1rem;">%</small></div>
         </div>
     </div>
-
-    <br>
-
-    <div class="page-content-wrapper">
-        <div class="container">
-
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr style="color:#0E2EB0">
-                            <th>Field</th>
-                            <th>Value</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>Report Type</td>
-                            <td>{{ report.report_type }}</td>
-                        </tr>
-                        <tr>
-                            <td>Generated At</td>
-                            <td>{{ report.generated_at }}</td>
-                        </tr>
-                        <tr>
-                            <td>Cache Hit</td>
-                            <td>{{ report.cache_hit }}</td>
-                        </tr>
-                        <tr>
-                            <td>Generation Time (ms)</td>
-                            <td>{{ report.generation_time_ms }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <div style="text-align:center;">
-                        <button type="button" class="btn btn-primary waves-effect waves-light"
-                                onClick=" window.location.href='/' ">
-                            Back
-                        </button>
-                    </div>
-
-                </div>
-            </div>
+    <div class="col-md-3 mb-3">
+        <div class="card card-metric p-3 text-center">
+            <div class="metric-label">Memory Usage</div>
+            <div class="metric-value">{{ report.data.memory_usage }}<small style="font-size:1rem;">%</small></div>
         </div>
     </div>
+    <div class="col-md-3 mb-3">
+        <div class="card card-metric p-3 text-center">
+            <div class="metric-label">Disk I/O</div>
+            <div class="metric-value">{{ report.data.disk_io }}<small style="font-size:1rem;">%</small></div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card card-metric p-3 text-center">
+            <div class="metric-label">Instancias Activas</div>
+            <div class="metric-value">{{ report.data.active_instances }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card card-metric p-4">
+            <table class="table table-borderless mb-0">
+                <tbody>
+                    <tr>
+                        <td class="text-muted" style="width:220px;">Tipo de reporte</td>
+                        <td><strong>{{ report.report_type }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Generado en</td>
+                        <td>{{ report.generated_at }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Tiempo de generación</td>
+                        <td>{{ report.generation_time_ms|floatformat:2 }} ms</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Fuente</td>
+                        <td>
+                            {% if report.cache_hit %}
+                                <span class="badge-cached">Pre-generado (caché)</span>
+                            {% else %}
+                                <span class="badge-miss">Generado en tiempo real</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="/" class="btn btn-outline-secondary btn-sm mr-2">Inicio</a>
+    <a href="/reports/cache-stats/" class="btn btn-outline-primary btn-sm">Ver estadísticas de caché</a>
 </div>
 
 {% endblock %}
