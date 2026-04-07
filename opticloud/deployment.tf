@@ -283,6 +283,12 @@ resource "aws_instance" "web_server" {
   user_data = <<-EOT
               #!/bin/bash
 
+              # Crear swap para evitar OOM en t3.micro durante la instalacion
+              fallocate -l 1G /swapfile
+              chmod 600 /swapfile
+              mkswap /swapfile
+              swapon /swapfile
+
               export DB_HOST=${aws_instance.bd_server.private_ip}
               export RABBITMQ_HOST=${aws_instance.rabbitmq_server.private_ip}
 
