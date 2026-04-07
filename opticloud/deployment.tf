@@ -8,7 +8,7 @@
 # AMI     : Ubuntu 24.04 LTS  ami-07062e2a343acc423
 # Instancias:
 #   - Web Servers (Django + Cache): t3.micro (8 GB storage)
-#   - Report Pre-Generator (worker EC2): t3.nano (8 GB storage)
+#   - Report Pre-Generator (worker EC2): t3.micro (8 GB storage)
 #   - RDS PostgreSQL: db.t3.micro (Dev/Test)
 # Balanceador: AWS ALB (Application Load Balancer)
 #
@@ -230,12 +230,12 @@ resource "aws_db_instance" "opticloud_db" {
 #   - Procesa jobs de analisis de forma asincrona real  (ASR-1 escalabilidad)
 #
 # NO expone ningun puerto HTTP. Solo inicia conexiones salientes a RDS.
-# Tipo: t3.nano (segun presupuesto indicado)
+# Tipo: t3.micro (segun presupuesto indicado)
 ###############################################################################
 
 resource "aws_instance" "report_pregenerator" {
   ami                    = var.ami_id
-  instance_type          = "t3.nano"
+  instance_type          = "t3.micro"
   subnet_id              = data.aws_subnet.az_a.id
   vpc_security_group_ids = [aws_security_group.pregenerator_sg.id]
 
